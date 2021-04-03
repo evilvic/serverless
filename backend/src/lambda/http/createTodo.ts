@@ -11,15 +11,19 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   logger.info(' -----> START TODO CREATION >>>>> ', event)
 
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
-  // TODO: Authorization
+
+  const authHeader = event.headers.Authorization
+  const split = authHeader.split(' ')
+  const jwt = split[1]
 
   try {
-    const newItem = await createTodo(newTodo)
+    const newItem = await createTodo(newTodo, jwt)
     logger.info(' { ^ _ ^ } SUCCES: TODO CREATED >>>>> ', newItem)
     return {
       statusCode: 201,
       headers: {
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
       },
       body: JSON.stringify({
         item: newItem
@@ -30,7 +34,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     return {
       statusCode: 500,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
       message: 'Error on creating Todo.'
