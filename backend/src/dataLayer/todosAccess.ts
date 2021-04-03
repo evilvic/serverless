@@ -5,12 +5,14 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 const XAWS = AWSXRay.captureAWS(AWS)
 
 import { TodoItem } from '../types/TodoItem'
+import { User } from '../types/User'
 
 export class TodoAccess {
 
   constructor(
     private readonly docClient: DocumentClient = createDynamoDBClient(),
-    private readonly todosTable = process.env.TODOS_TABLE) {
+    private readonly todosTable = process.env.TODOS_TABLE,
+    private readonly userIdIndex = process.env.USER_ID_INDEX) {
   }
 
   async createTodo(todo: TodoItem): Promise<TodoItem> {
@@ -19,6 +21,19 @@ export class TodoAccess {
       Item: todo
     }).promise()
     return todo
+  }
+
+  async getTodos(user: User): Promise<TodoItem[]> {
+    const result = await this.docClient.query({
+      TableName: this.todosTable,
+      IndexName: this.userIdIndex,
+      KeyConditionExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId":user.userId
+      }
+    }).promise()
+    const todos = result.Items ? result.Items : []
+    return todos as TodoItem[]
   }
 
 }

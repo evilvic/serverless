@@ -24,3 +24,13 @@ export async function createTodo(
   })
 
 }
+
+export  async function getTodos(
+  jwt: string
+): Promise<TodoItem[]> {
+
+  const userId = parseUserId(jwt)
+
+  return await todoAcces.getTodos({ userId })
+  
+}
