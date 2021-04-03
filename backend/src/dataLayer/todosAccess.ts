@@ -16,7 +16,7 @@ export class TodoAccess {
   async createTodo(todo: TodoItem): Promise<TodoItem> {
     await this.docClient.put({
       TableName: this.todosTable,
-      item: todo
+      Item: todo
     }).promise()
     return todo
   }
