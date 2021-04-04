@@ -51,3 +51,13 @@ export async function deleteTodo(
   return await todoAccess.deleteTodo({ userId, todoId })
 
 }
+
+export async function updateAttachmentUrl(
+  todoId: string,
+  imageUrl: string,
+  jwt: string): Promise<TodoItem> {
+
+  const userId = parseUserId(jwt)
+  return await todoAccess.updateAttachmentUrl({ userId, todoId, imageUrl })
+
+}
