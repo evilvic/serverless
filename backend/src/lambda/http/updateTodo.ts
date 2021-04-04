@@ -22,7 +22,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const split = authHeader.split(' ')
   const jwt = split[1]
 
-  const updatedTodo = await updateTodo(todoToUpdate, jwt)
+  const updatedItem = await updateTodo(todoToUpdate, jwt)
   
   return {
     statusCode: 201,
@@ -31,7 +31,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      item: updatedTodo
+      item: updatedItem
     })
   }
 }
