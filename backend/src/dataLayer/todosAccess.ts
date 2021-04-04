@@ -6,6 +6,7 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 import { TodoItem } from '../types/TodoItem'
 import { User } from '../types/User'
+import { TodoUpdate } from '../types/TodoUpdate'
 
 export class TodoAccess {
 
@@ -34,6 +35,26 @@ export class TodoAccess {
     }).promise()
     const todos = result.Items ? result.Items : []
     return todos as TodoItem[]
+  }
+
+  async updateTodo(todo: TodoUpdate): Promise<TodoItem> {
+    await this.docClient.update({
+      TableName: this.todosTable,
+      Key:{
+        todoId: todo.todoId
+      },
+      ExpressionAttributeNames: { "#N": "name" },
+      UpdateExpression: "set #N = :todoName, dueDate = :dueDate, done = :done",
+      ConditionExpression: "userId = :userId",
+      ExpressionAttributeValues: { 
+        ":todoName": todo.name,
+        ":dueDate": todo.dueDate,
+        ":done": todo.done,
+        ":userId": todo.userId
+      },
+      ReturnValues:"UPDATED_NEW"
+    }).promise()
+    return todo as TodoItem
   }
 
 }

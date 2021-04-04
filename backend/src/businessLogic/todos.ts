@@ -5,7 +5,7 @@ import { TodoAccess } from '../dataLayer/todosAccess'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { parseUserId } from '../auth/utils'
 
-const todoAcces = new TodoAccess()
+const todoAccess = new TodoAccess()
 
 export async function createTodo(
   createTodoRequest: CreateTodoRequest,
@@ -15,7 +15,7 @@ export async function createTodo(
   const userId = parseUserId(jwt)
   const itemId = uuid.v4()
 
-  return await todoAcces.createTodo({
+  return await todoAccess.createTodo({
     userId: userId,
     todoId: itemId,
     createdAt: new Date().toISOString(),
@@ -30,7 +30,15 @@ export  async function getTodos(
 ): Promise<TodoItem[]> {
 
   const userId = parseUserId(jwt)
-
-  return await todoAcces.getTodos({ userId })
+  return await todoAccess.getTodos({ userId })
   
+}
+
+export async function updateTodo(
+  todo, 
+  jwt: string): Promise<TodoItem> {
+  
+  const userId = parseUserId(jwt)
+  return await todoAccess.updateTodo({ userId, ...todo })
+
 }
